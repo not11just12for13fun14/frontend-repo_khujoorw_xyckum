@@ -5,6 +5,7 @@ const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 export default function Demo() {
   const [topics, setTopics] = useState([]);
   const [transcript, setTranscript] = useState('My package is two weeks late and tracking stopped updating. Can I get a refund?');
+  const [useLLM, setUseLLM] = useState(true);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -24,7 +25,7 @@ export default function Demo() {
       const res = await fetch(`${API_BASE}/api/conversations/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript })
+        body: JSON.stringify({ transcript, use_llm: useLLM })
       });
       const data = await res.json();
       setResult(data);
@@ -69,6 +70,12 @@ export default function Demo() {
               className="mt-3 w-full h-40 rounded-xl bg-black/30 border border-white/10 text-white p-3 outline-none focus:ring-2 focus:ring-white/30"
               placeholder="Paste a chat transcript here..."
             />
+            <div className="mt-3 flex items-center gap-3 text-white/80 text-sm">
+              <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" checked={useLLM} onChange={e => setUseLLM(e.target.checked)} className="h-4 w-4" />
+                Use LLM classifier
+              </label>
+            </div>
             <button onClick={analyze} disabled={!canAnalyze || loading} className="mt-3 px-4 py-2 rounded-xl bg-white text-slate-900 font-semibold disabled:opacity-50">
               {loading ? 'Analyzing...' : 'Analyze'}
             </button>
